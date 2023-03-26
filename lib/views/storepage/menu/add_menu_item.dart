@@ -4,15 +4,9 @@ import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'menu.dart';
 
-String _selectedCategory = list.first;
+String _selectedCategory = 'Select Category';
 
-const List<String> list = <String>[
-  'Select Category',
-  'Drinks',
-  'Choumin',
-  'Diner',
-  'Salad'
-];
+List<String> _categories = [];
 
 class AddMenuItem extends StatefulWidget {
   @override
@@ -27,8 +21,6 @@ class _AddMenuItemState extends State<AddMenuItem> {
   TextEditingController _imageController = TextEditingController();
   TextEditingController _descController = TextEditingController();
 
-  List<String> _categories = [];
-
   @override
   void initState() {
     super.initState();
@@ -42,8 +34,9 @@ class _AddMenuItemState extends State<AddMenuItem> {
         .map((doc) => doc.data()['category_name'] as String)
         .toList();
     setState(() {
-      _categories = categories;
-      print(_categories);
+      _categories =
+          categories.where((cat) => cat != 'Select Category').toList();
+      _categories.insert(0, 'Select Category');
     });
   }
 
@@ -129,12 +122,15 @@ class _AddMenuItemState extends State<AddMenuItem> {
                         _selectedCategory = value!;
                       });
                     },
-                    items: list.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                    items: _categories
+                        .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        })
+                        .toSet()
+                        .toList(),
                   ),
                 ),
               ),
@@ -211,7 +207,7 @@ class _AddMenuItemState extends State<AddMenuItem> {
     _descController.text = '';
     _barcodeController.text = '';
     setState(() {
-      _selectedCategory = list.first;
+      _selectedCategory = "Select Category";
     });
   }
 

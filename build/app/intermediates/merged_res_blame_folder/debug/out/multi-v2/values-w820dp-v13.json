@@ -4,7 +4,7 @@
             "outputFile": "com.example.firebaseapp-mergeDebugResources-30:/values-w820dp-v13/values-w820dp-v13.xml",
             "map": [
                 {
-                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\build\\flutter_barcode_scanner\\intermediates\\packaged_res\\debug\\values-w820dp-v13\\values-w820dp-v13.xml",
+                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\nishana_pos\\build\\flutter_barcode_scanner\\intermediates\\packaged_res\\debug\\values-w820dp-v13\\values-w820dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

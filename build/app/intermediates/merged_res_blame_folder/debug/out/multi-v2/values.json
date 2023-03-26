@@ -93,25 +93,6 @@
                     }
                 },
                 {
-                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\android\\app\\src\\main\\res\\values\\styles.xml",
-                    "from": {
-                        "startLines": "3,14",
-                        "startColumns": "4,4",
-                        "startOffsets": "176,832",
-                        "endLines": "7,16",
-                        "endColumns": "12,12",
-                        "endOffsets": "483,998"
-                    },
-                    "to": {
-                        "startLines": "3091,3143",
-                        "startColumns": "4,4",
-                        "startOffsets": "200758,204443",
-                        "endLines": "3094,3145",
-                        "endColumns": "12,12",
-                        "endOffsets": "200934,204607"
-                    }
-                },
-                {
                     "source": "C:\\Users\\jitu\\.gradle\\caches\\transforms-3\\8be57a0ab0019d21959acbe59147477f\\transformed\\jetified-viewpager2-1.0.0\\res\\values\\values.xml",
                     "from": {
                         "startLines": "2",
@@ -258,6 +239,23 @@
                     }
                 },
                 {
+                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\nishana_pos\\build\\app\\generated\\res\\google-services\\debug\\values\\values.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "55,199,281,385,494,614,711",
+                        "endColumns": "143,81,103,108,119,96,73",
+                        "endOffsets": "194,276,380,489,609,706,780"
+                    },
+                    "to": {
+                        "startLines": "1104,1112,1113,1114,1115,1116,1179",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "66678,67505,67587,67691,67800,67920,78259",
+                        "endColumns": "143,81,103,108,119,96,73",
+                        "endOffsets": "66817,67582,67686,67795,67915,68012,78328"
+                    }
+                },
+                {
                     "source": "C:\\Users\\jitu\\.gradle\\caches\\transforms-3\\cfdafb114205ef456b4359481e6d0c3c\\transformed\\lifecycle-runtime-2.5.1\\res\\values\\values.xml",
                     "from": {
                         "startLines": "2",
@@ -313,37 +311,22 @@
                     }
                 },
                 {
-                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\build\\flutter_barcode_scanner\\intermediates\\packaged_res\\debug\\values\\values.xml",
+                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\nishana_pos\\android\\app\\src\\main\\res\\values\\styles.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,113,169,219,291,355,437,507,627,784,818,919,973,1043",
-                        "endColumns": "57,55,49,71,63,81,69,119,156,33,100,53,69,47",
-                        "endOffsets": "108,164,214,286,350,432,502,622,779,813,914,968,1038,1086"
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "176,832",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "483,998"
                     },
                     "to": {
-                        "startLines": "599,600,1073,1074,1075,1076,1077,1120,1171,1172,1178,1180,1183,1184",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "32830,32888,63145,63195,63267,63331,63413,68383,77165,77322,78158,78333,78511,78581",
-                        "endColumns": "57,55,49,71,63,81,69,119,156,33,100,53,69,47",
-                        "endOffsets": "32883,32939,63190,63262,63326,63408,63478,68498,77317,77351,78254,78382,78576,78624"
-                    }
-                },
-                {
-                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\build\\app\\generated\\res\\google-services\\debug\\values\\values.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8",
-                        "startColumns": "4,4,4,4,4,4,4",
-                        "startOffsets": "55,199,281,385,494,614,711",
-                        "endColumns": "143,81,103,108,119,96,73",
-                        "endOffsets": "194,276,380,489,609,706,780"
-                    },
-                    "to": {
-                        "startLines": "1104,1112,1113,1114,1115,1116,1179",
-                        "startColumns": "4,4,4,4,4,4,4",
-                        "startOffsets": "66678,67505,67587,67691,67800,67920,78259",
-                        "endColumns": "143,81,103,108,119,96,73",
-                        "endOffsets": "66817,67582,67686,67795,67915,68012,78328"
+                        "startLines": "3091,3143",
+                        "startColumns": "4,4",
+                        "startOffsets": "200758,204443",
+                        "endLines": "3094,3145",
+                        "endColumns": "12,12",
+                        "endOffsets": "200934,204607"
                     }
                 },
                 {
@@ -399,6 +382,23 @@
                         "startOffsets": "20219,20277,20343,20406,33009,33080,66610,67290,67357,67436",
                         "endColumns": "57,65,62,61,70,71,67,66,78,68",
                         "endOffsets": "20272,20338,20401,20463,33075,33147,66673,67352,67431,67500"
+                    }
+                },
+                {
+                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\nishana_pos\\build\\flutter_barcode_scanner\\intermediates\\packaged_res\\debug\\values\\values.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,113,169,219,291,355,437,507,627,784,818,919,973,1043",
+                        "endColumns": "57,55,49,71,63,81,69,119,156,33,100,53,69,47",
+                        "endOffsets": "108,164,214,286,350,432,502,622,779,813,914,968,1038,1086"
+                    },
+                    "to": {
+                        "startLines": "599,600,1073,1074,1075,1076,1077,1120,1171,1172,1178,1180,1183,1184",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "32830,32888,63145,63195,63267,63331,63413,68383,77165,77322,78158,78333,78511,78581",
+                        "endColumns": "57,55,49,71,63,81,69,119,156,33,100,53,69,47",
+                        "endOffsets": "32883,32939,63190,63262,63326,63408,63478,68498,77317,77351,78254,78382,78576,78624"
                     }
                 }
             ]

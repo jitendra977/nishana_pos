@@ -4,7 +4,7 @@
             "outputFile": "com.example.firebaseapp-mergeDebugResources-30:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "H:\\Android\\FirebaseRealtimeapp\\firebaseapp\\nishana_pos\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
