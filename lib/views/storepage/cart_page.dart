@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebaseapp/views/storepage/menu/add_menu_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../models/rest_tables.dart';
 
 class CartPage extends StatefulWidget {
@@ -324,9 +326,14 @@ class MenuIconR extends StatelessWidget {
           Icons.search,
           color: Colors.white,
         ),
-        Icon(
-          Icons.add,
-          color: Colors.white,
+        GestureDetector(
+          onTap: () {
+            Get.to(() => AddMenuItem());
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
         ),
         Icon(
           Icons.info_outline,

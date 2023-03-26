@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
-import 'menu.dart';
+
 
 String _selectedCategory = 'Select Category';
 
@@ -93,7 +93,7 @@ class _AddMenuItemState extends State<AddMenuItem> {
                     'img_url': img_url,
                     'description': description,
                     'barcode': barcode
-                  }).then((value) => {Get.offAll(() => MenuList())});
+                  }).then((value) => {Get.offAll(() => Navigator.pop)});
                 } catch (e) {
                   print("error: " + e.toString());
                 }

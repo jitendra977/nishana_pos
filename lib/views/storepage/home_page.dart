@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import 'menu/menus.dart';
 import 'order_page.dart';
+import 'other_page/others_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -172,11 +173,16 @@ class MainMenu extends StatelessWidget {
           leading: Icon(Icons.apps),
           title: Text("Report"),
         )),
-        Card(
-            child: ListTile(
-          leading: Icon(Icons.apps),
-          title: Text("Other"),
-        )),
+        GestureDetector(
+          onTap: () {
+            Get.to(() => OthersPages());
+          },
+          child: Card(
+              child: ListTile(
+            leading: Icon(Icons.apps),
+            title: Text("Other"),
+          )),
+        ),
         Card(
             child: ListTile(
           leading: Icon(Icons.manage_accounts),
