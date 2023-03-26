@@ -4,7 +4,6 @@ import 'package:firebaseapp/views/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'menu/menu.dart';
 import 'menu/menus.dart';
 import 'order_page.dart';
 
