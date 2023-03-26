@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,6 +27,15 @@ class _AddMenuItemState extends State<AddMenuItem> {
   void initState() {
     super.initState();
     _getCategories();
+  }
+
+  String generateItemId() {
+    var rng = new Random();
+    int randomNumber =
+        rng.nextInt(1000000); // generate a random integer between 0 and 999999
+    String itemId =
+        "NIS-$randomNumber"; // concatenate the random number with a prefix string
+    return itemId;
   }
 
   Future<void> _getCategories() async {
@@ -75,6 +86,7 @@ class _AddMenuItemState extends State<AddMenuItem> {
                       .set({
                     'createdAt': DateTime.now(),
                     'item_name': name,
+                    'item_id': generateItemId(),
                     'price': price,
                     'category': _selectedCategory,
                     'qty': qty,
@@ -102,7 +114,7 @@ class _AddMenuItemState extends State<AddMenuItem> {
                 enabled: false,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: '1',
+                  labelText: generateItemId(),
                 ),
                 keyboardType: TextInputType.text,
               ),

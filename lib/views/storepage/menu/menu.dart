@@ -68,12 +68,29 @@ class _MenuListState extends State<MenuList> {
                 itemBuilder: (context, index) {
                   var name = snapshot.data?.docs[index]['item_name'];
                   var category = snapshot.data?.docs[index]['category'];
+                  var image = snapshot.data?.docs[index]['img_url'];
                   var price = snapshot.data?.docs[index]['price'];
 
+                  if (image == null || image.isEmpty) {
+                    return Center(child: CupertinoActivityIndicator());
+                  }
                   return Container(
                     child: Column(
                       children: [
                         ListTile(
+                            leading: CircleAvatar(
+                              child: image != null
+                                  ? Image.network(
+                                      image,
+                                      errorBuilder: (BuildContext context,
+                                          Object exception,
+                                          StackTrace? stackTrace) {
+                                        // Return an ErrorWidget when the image fails to load
+                                        return const Icon(Icons.error);
+                                      },
+                                    )
+                                  : const Icon(Icons.image),
+                            ),
                             title: Text(
                               name,
                               style: TextStyle(fontWeight: FontWeight.bold),

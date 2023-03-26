@@ -1,7 +1,6 @@
-import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../models/items.dart';
 import '../../models/rest_tables.dart';
 
 class CartPage extends StatefulWidget {
@@ -13,7 +12,15 @@ class CartPage extends StatefulWidget {
   State<CartPage> createState() => _CartPageState();
 }
 
+String _SelectedCategoryName = 'Tea';
+
 class _CartPageState extends State<CartPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,31 +102,69 @@ class _CartPageState extends State<CartPage> {
                 child: Row(
                   children: [
                     Container(
-                      color: Colors.red,
-                      width: 140,
-                      child: ListView(children: [
-                        Card(
-                          child: ListTile(
-                            title: Text("Food"),
-                          ),
-                        ),
-                        Card(
-                          child: ListTile(
-                            title: Text("Salad"),
-                          ),
-                        ),
-                        Card(
-                          child: ListTile(
-                            title: Text("Momo"),
-                          ),
-                        ),
-                        Card(
-                          child: ListTile(
-                            title: Text("Drinks"),
-                          ),
-                        ),
-                      ]),
-                    ),
+                        color: Colors.red,
+                        width: 130,
+                        child: StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection("categories")
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasError) {
+                              return Text("something error");
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CupertinoActivityIndicator(),
+                              );
+                            }
+                            if (snapshot.data!.docs.isEmpty) {
+                              return Center(
+                                child: Text("No data Found"),
+                              );
+                            }
+                            if (snapshot != null && snapshot.data != null) {
+                              return ListView.builder(
+                                itemCount: snapshot.data?.docs.length,
+                                itemBuilder: (context, index) {
+                                  var name = snapshot.data?.docs[index]
+                                      ['category_name'];
+
+                                  return Container(
+                                    child: Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _SelectedCategoryName = name;
+                                            });
+                                            print(name);
+                                          },
+                                          child: Card(
+                                            child: ListTile(
+                                              title: Text(
+                                                name,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Divider(
+                                          height: 0,
+                                          color: Colors.black,
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                            return Container();
+                          },
+                        )),
                     ShowItems(),
                   ],
                 )),
@@ -140,61 +185,80 @@ class ShowItems extends StatefulWidget {
 }
 
 class _ShowItemsState extends State<ShowItems> {
-  List<Item> items = [];
-
-  Future<void> loadJsonData() async {
-    String jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/data/items.json');
-    List<dynamic> jsonData = jsonDecode(jsonString);
-    List<Item> itemList = [];
-
-    for (var item in jsonData) {
-      itemList.add(Item.fromJson(item));
-    }
-
-    setState(() {
-      items = itemList;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadJsonData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        color: Color.fromARGB(255, 171, 141, 139),
-        child: GridView.builder(
-          itemCount: items.length,
-          gridDelegate:
-              SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 150),
-          itemBuilder: (context, index) {
-            return Card(
-              child: Container(
-                child: Column(children: [
-                  Text(
-                    items[index].name.toString(),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 10,
-                        color: Colors.black54),
-                  ),
-                  Image.network(
-                    items[index].image.toString(),
-                    height: 60,
-                  ),
-                  Text("Rs. ${items[index].price.toString()}"),
-                ]),
-              ),
-            );
-          },
-        ),
-      ),
-    );
+        child: StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection("menu_items")
+          .where("category", isEqualTo: _SelectedCategoryName)
+          .snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text("something error");
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CupertinoActivityIndicator(),
+          );
+        }
+        if (snapshot.data!.docs.isEmpty) {
+          return Center(
+            child: Text("No data Found"),
+          );
+        }
+        if (snapshot != null && snapshot.data != null) {
+          return ListView.builder(
+            itemCount: snapshot.data?.docs.length,
+            itemBuilder: (context, index) {
+              var name = snapshot.data?.docs[index]['item_name'];
+              var category = snapshot.data?.docs[index]['category'];
+              var image = snapshot.data?.docs[index]['img_url'];
+              var price = snapshot.data?.docs[index]['price'];
+
+              if (image == null || image.isEmpty) {
+                return Center(child: CupertinoActivityIndicator());
+              }
+              return Container(
+                child: Column(
+                  children: [
+                    ListTile(
+                        leading: CircleAvatar(
+                          child: image != null
+                              ? Image.network(
+                                  image,
+                                  errorBuilder: (BuildContext context,
+                                      Object exception,
+                                      StackTrace? stackTrace) {
+                                    // Return an ErrorWidget when the image fails to load
+                                    return const Icon(Icons.error);
+                                  },
+                                )
+                              : const Icon(Icons.image),
+                        ),
+                        title: Text(
+                          name,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          category,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        trailing: Text("Rs ${price}",
+                            style: TextStyle(fontWeight: FontWeight.bold))),
+                    Divider(
+                      height: 0,
+                      color: Colors.black,
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        }
+        return Container();
+      },
+    ));
   }
 }
 
