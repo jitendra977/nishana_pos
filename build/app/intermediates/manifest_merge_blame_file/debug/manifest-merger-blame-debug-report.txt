@@ -45,7 +45,7 @@
 28-->[androidx.core:core:1.8.0] C:\Users\jitu\.gradle\caches\transforms-3\08a71c84c177d944c3ca1ffed95eb09f\transformed\core-1.8.0\AndroidManifest.xml:24:18-86
 29        android:debuggable="true"
 30        android:icon="@mipmap/ic_launcher"
-31        android:label="firebaseapp"
+31        android:label="nishanapos"
 32        android:largeHeap="true"
 32-->[:flutter_barcode_scanner] H:\Android\FirebaseRealtimeapp\firebaseapp\nishana_pos\build\flutter_barcode_scanner\intermediates\merged_manifest\debug\AndroidManifest.xml:16:9-33
 33        android:theme="@style/Theme.AppCompat.NoActionBar" >

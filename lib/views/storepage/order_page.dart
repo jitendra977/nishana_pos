@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../models/rest_tables.dart';
+import 'package:get/get.dart';
 import 'cart_page.dart';
 
 class OrderPage extends StatelessWidget {
-  const OrderPage({super.key});
+  const OrderPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,61 +38,88 @@ class OrderPage extends StatelessWidget {
           ),
         ],
       ),
-      body: GridView.builder(
-          itemCount: tables.length,
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 150,
-            crossAxisSpacing: 1,
-            mainAxisSpacing: 1,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CartPage(
-                        resTables: tables[index],
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('restaurant_table')
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text("something error");
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CupertinoActivityIndicator(),
+            );
+          }
+          if (snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Text("No data Found"),
+            );
+          }
+          if (snapshot != null && snapshot.data != null) {
+            return GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 1,
+                crossAxisSpacing: 1,
+              ),
+              itemCount: snapshot.data?.docs.length,
+              itemBuilder: (context, index) {
+                var status = snapshot.data?.docs[index]['status'];
+                var table_name = snapshot.data?.docs[index]['table_name'];
+                return Container(
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.to(() => CartPage(restaurantTable: table_name));
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.amber),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Colors.amber,
-                    ),
-                    borderRadius: BorderRadius.circular(20.0), //<-- SEE HERE
-                  ),
-                  child: Container(
-                    child: Column(children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(tables[index].tableName,
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                      Text(tables[index].status,
-                          style: TextStyle(fontSize: 10)),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 25, vertical: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
                           children: [
-                            Icon(Icons.print, size: 25),
-                            Icon(Icons.share, size: 25),
+                            Text(
+                              table_name,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              status == "booked" ? "Rs 620" : "Empty",
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              status == "booked" ? "Cooking" : "",
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Icon(Icons.local_restaurant)
                           ],
                         ),
-                      )
-                    ]),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             );
-          }),
+          }
+          return Container();
+        },
+      ),
     );
   }
 }

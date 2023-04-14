@@ -47,8 +47,9 @@ class _TablesState extends State<Tables> {
           ],
         ),
         body: StreamBuilder(
-          stream:
-              FirebaseFirestore.instance.collection("categories").snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection("restaurant_table")
+              .snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
               return Text("something error");
@@ -67,7 +68,8 @@ class _TablesState extends State<Tables> {
               return ListView.builder(
                 itemCount: snapshot.data?.docs.length,
                 itemBuilder: (context, index) {
-                  var name = snapshot.data?.docs[index]['category_name'];
+                  var name = snapshot.data?.docs[index]['table_name'];
+                  var floor = snapshot.data?.docs[index]['status'];
 
                   return Container(
                     child: Column(
@@ -77,6 +79,7 @@ class _TablesState extends State<Tables> {
                             name,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
+                          trailing: Text(floor),
                         ),
                         Divider(
                           color: Colors.black,

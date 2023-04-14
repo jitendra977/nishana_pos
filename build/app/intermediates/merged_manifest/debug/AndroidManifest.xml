@@ -28,7 +28,7 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="firebaseapp"
+        android:label="nishanapos"
         android:largeHeap="true"
         android:theme="@style/Theme.AppCompat.NoActionBar" >
         <activity

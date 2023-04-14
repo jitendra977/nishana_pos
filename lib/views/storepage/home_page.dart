@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebaseapp/notes/notes.dart';
-import 'package:firebaseapp/views/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../notes/notes.dart';
+import '../loginScreen.dart';
 import 'menu/menus.dart';
 import 'order_page.dart';
 import 'other_page/others_page.dart';

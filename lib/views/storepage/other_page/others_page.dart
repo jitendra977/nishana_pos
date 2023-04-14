@@ -1,10 +1,10 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebaseapp/views/storepage/other_page/tables/tables.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'tables/tables.dart';
 
 class OthersPages extends StatefulWidget {
   @override
@@ -15,10 +15,6 @@ class _OthersPagesState extends State<OthersPages> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add),
-      ),
       appBar: AppBar(
         centerTitle: true,
         title: Text('OthersPages'),

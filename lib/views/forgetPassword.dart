@@ -1,11 +1,12 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebaseapp/Services/showErrorDilog.dart';
-import 'package:firebaseapp/views/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+
+import '../Services/showErrorDilog.dart';
+import 'loginScreen.dart';
 
 class ForgetPasssword extends StatelessWidget {
   TextEditingController forgotEmeilController = TextEditingController();

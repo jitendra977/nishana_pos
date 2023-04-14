@@ -1,13 +1,13 @@
 // ignore_for_file: unused_local_variable, must_be_immutable
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebaseapp/views/forgetPassword.dart';
-import 'package:firebaseapp/views/storepage/home_page.dart';
-import 'package:firebaseapp/views/signUpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import '../Services/showErrorDilog.dart';
+import 'forgetPassword.dart';
+import 'signUpScreen.dart';
+import 'storepage/home_page.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});

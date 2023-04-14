@@ -2,9 +2,10 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebaseapp/notes/notes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'notes.dart';
 
 class AddNote extends StatelessWidget {
   TextEditingController noteController = TextEditingController();
