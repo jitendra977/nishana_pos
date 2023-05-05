@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'cart_page.dart';
+import 'package:nishanapos/views/storepage/cart.dart';
+
 
 class OrderPage extends StatelessWidget {
   const OrderPage({Key? key}) : super(key: key);
@@ -70,7 +71,9 @@ class OrderPage extends StatelessWidget {
                 return Container(
                   child: GestureDetector(
                     onTap: () {
-                      Get.to(() => CartPage(restaurantTable: table_name));
+                      Get.to(() => CartPage(
+                            restaurantTable: table_name,
+                          ));
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(

@@ -2,6 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:nishanapos/Services/Providers/CartProviders/GrandTotalProvider.dart';
+import 'package:nishanapos/provider/providers/example_1Provider.dart';
+import 'package:nishanapos/provider/screen/exmple_1Screen.dart';
+import 'package:provider/provider.dart';
 import 'views/loginScreen.dart';
 import 'views/storepage/home_page.dart';
 
@@ -26,13 +30,19 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Nishana POS',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GrandTotalProvider()),
+        ChangeNotifierProvider(create: (_) => ExampleOneProvider()),
+      ],
+      child: GetMaterialApp(
+        title: 'Nishana POS',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: user != null ? MyHomePage() : LoginScreen(),
       ),
-      home: user != null ? MyHomePage() : LoginScreen(),
     );
   }
 }
