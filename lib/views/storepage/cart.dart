@@ -1,36 +1,23 @@
 // ignore_for_file: unnecessary_null_comparison
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nishanapos/models/add_to_cart.dart';
+import 'package:nishanapos/Services/Providers/CartProviders/GrandTotalProvider.dart';
 import 'package:provider/provider.dart';
-import '../../Services/Providers/CartProviders/GrandTotalProvider.dart';
-import 'menu/add_menu_item.dart';
 
-final _formKey = GlobalKey<FormState>();
-var totalPrice = 0;
+import '../../Services/Providers/Category_selector.dart';
+import 'cart_widget/cart_table.dart';
+import 'menu/add_menu_item.dart';
 
 class CartPage extends StatefulWidget {
   final String restaurantTable;
-
   const CartPage({super.key, required, required this.restaurantTable});
 
   @override
   State<CartPage> createState() => _CartPageState();
 }
 
-String _SelectedCategoryName = 'Tea';
-User? userId = FirebaseAuth.instance.currentUser;
-
 class _CartPageState extends State<CartPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,379 +51,254 @@ class _CartPageState extends State<CartPage> {
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            Container(
-                color: Color.fromARGB(255, 85, 66, 4),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget.restaurantTable,
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 253, 250, 250),
-                            fontSize: 20),
-                      ),
-                      Text(
-                        "Bill No: A5422",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            fontSize: 20),
-                      ),
-                      Text(
-                        totalPrice.toString(),
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            fontSize: 20),
-                      ),
-                    ],
-                  ),
-                )),
-            Container(
-              color: Color.fromARGB(255, 255, 255, 255),
-              height: MediaQuery.of(context).size.height / 2.5,
-              child: CartTable(),
-            ),
-            Container(
-                color: Color.fromRGBO(128, 12, 12, 1),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Menu",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                      MenuIconR(),
-                    ],
-                  ),
-                )),
-            Expanded(
-              child: Container(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  child: Row(
-                    children: [
-                      Container(
-                          color: Colors.red,
-                          width: 130,
-                          child: StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection("categories")
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasError) {
-                                return Text("something error");
-                              }
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                  child: CupertinoActivityIndicator(),
-                                );
-                              }
-                              if (snapshot.data!.docs.isEmpty) {
-                                return Center(
-                                  child: Text("No data Found"),
-                                );
-                              }
-                              if (snapshot != null && snapshot.data != null) {
-                                return ListView.builder(
-                                  itemCount: snapshot.data?.docs.length,
-                                  itemBuilder: (context, index) {
-                                    var name = snapshot.data?.docs[index]
-                                        ['category_name'];
+      body: Column(
+        children: <Widget>[
+          Container(
+              color: Color.fromARGB(255, 85, 66, 4),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.restaurantTable,
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 253, 250, 250),
+                          fontSize: 20),
+                    ),
+                    Text(
+                      "Bill No: A5422",
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontSize: 20),
+                    ),
+                    Consumer<GrandTotalProvider>(
+                      builder: (BuildContext context, value, Widget? child) {
+                        return Text(
+                          value.grandTotal.toString(),
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 20),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              )),
+          Container(
+            color: Color.fromARGB(255, 255, 255, 255),
+            height: MediaQuery.of(context).size.height / 2.5,
+            child: CartTable(restaurantTable: widget.restaurantTable),
+          ),
+          Container(
+              color: Color.fromRGBO(128, 12, 12, 1),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Menu",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    MenuIconR(),
+                  ],
+                ),
+              )),
+          Expanded(
+            child: Container(
+              color: Color.fromARGB(255, 238, 240, 242),
+              child: Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                          child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('categories')
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Text('Loading...');
+                          }
+                          final List<DocumentSnapshot> documents =
+                              snapshot.data!.docs;
 
-                                    return Container(
-                                      child: Column(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _SelectedCategoryName = name;
-                                              });
-                                              print(name);
-                                            },
+                          // Extract category names from the documents
+                          final List categoryNames = documents
+                              .map((doc) => doc.get('category_name'))
+                              .toList();
+
+                          return ListView.builder(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: categoryNames.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 1.0, horizontal: 6.0),
+                                child: Consumer<CategoryProvider>(
+                                  builder: (BuildContext context, value,
+                                      Widget? child) {
+                                    return ElevatedButton(
+                                      onPressed: () {
+                                        value.setSelectedCategoryName(
+                                            categoryNames[index]);
+                                        print(value.selectedCategoryName);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 12.0),
+                                      ),
+                                      child: Text(
+                                        categoryNames[index],
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      )),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            // Add your item details here
+                            Consumer<CategoryProvider>(
+                              builder:
+                                  (BuildContext context, value, Widget? child) {
+                                return StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('menu_items')
+                                      .where("category",
+                                          isEqualTo: value.selectedCategoryName)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError)
+                                      return Text('Something went wrong');
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting)
+                                      return Text('Loading...');
+
+                                    List<Map<String, dynamic>> items =
+                                        snapshot.data!.docs
+                                            .map((doc) => {
+                                                  'item_name':
+                                                      doc.get('item_name'),
+                                                  'img_url': doc.get('img_url'),
+                                                  'price': doc.get('price'),
+                                                })
+                                            .toList();
+                                    return Expanded(
+                                      child: ListView.builder(
+                                        physics:
+                                            AlwaysScrollableScrollPhysics(),
+                                        itemCount: items.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 1.0, horizontal: 6.0),
                                             child: Card(
+                                              elevation: 2,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                side: BorderSide(
+                                                  color: Colors.grey.shade300,
+                                                  width: 1,
+                                                ),
+                                              ),
                                               child: ListTile(
-                                                title: Text(
-                                                  name,
-                                                  style: TextStyle(
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                  horizontal: 16.0,
+                                                  vertical: 10.0,
+                                                ),
+                                                leading: Container(
+                                                  width: 50,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: FadeInImage(
+                                                    placeholder: AssetImage(
+                                                        'assets/logo/logo.png'),
+                                                    image: NetworkImage(
+                                                        items[index]
+                                                            ['img_url']),
+                                                    fit: BoxFit.cover,
+                                                    imageErrorBuilder:
+                                                        (_, __, ___) =>
+                                                            Icon(Icons.error),
+                                                  ),
+                                                ),
+                                                title: Flexible(
+                                                  child: Text(
+                                                    items[index]['item_name']
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                      fontSize: 16.0,
                                                       fontWeight:
-                                                          FontWeight.bold),
+                                                          FontWeight.bold,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                subtitle: Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 8.0),
+                                                  child: Text(
+                                                    'Rs.${items[index]['price']}',
+                                                    style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          Divider(
-                                            height: 0,
-                                            color: Colors.black,
-                                          )
-                                        ],
+                                          );
+                                        },
                                       ),
                                     );
                                   },
                                 );
-                              }
-                              return Container();
-                            },
-                          )),
-                      ShowItems(),
-                    ],
-                  )),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ShowItems extends StatefulWidget {
-  const ShowItems({
-    super.key,
-  });
-
-  @override
-  State<ShowItems> createState() => _ShowItemsState();
-}
-
-class _ShowItemsState extends State<ShowItems> {
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-        child: StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection("menu_items")
-          .where("category", isEqualTo: _SelectedCategoryName)
-          .snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text("something error");
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CupertinoActivityIndicator(),
-          );
-        }
-        if (snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: Text("No data Found"),
-          );
-        }
-        if (snapshot != null && snapshot.data != null) {
-          return ListView.builder(
-            itemCount: snapshot.data?.docs.length,
-            itemBuilder: (context, index) {
-              var name = snapshot.data?.docs[index]['item_name'];
-              var category = snapshot.data?.docs[index]['category'];
-              var image = snapshot.data?.docs[index]['img_url'];
-              var price = snapshot.data?.docs[index]['price'];
-
-              void SaveToCart() {
-                totalPrice += int.parse(price);
-                if (_formKey.currentState!.validate()) {
-                  final _addtocart = AddToCart(
-                    itemName: name,
-                    date: DateTime.now().toString(),
-                    price: int.tryParse(price),
-                    qty: 1,
-                    userId: userId?.uid,
-                    tableNumber: "Table1",
-                  );
-                  try {
-                    FirebaseFirestore.instance
-                        .collection("cart_items")
-                        .doc()
-                        .set(_addtocart.toJson());
-                  } catch (e) {
-                    print(e);
-                  }
-                }
-              }
-
-              if (image == null || image.isEmpty) {
-                return Center(child: CupertinoActivityIndicator());
-              }
-              return Container(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          SaveToCart();
-                        });
-                      },
-                      child: ListTile(
-                          leading: CircleAvatar(
-                            child: image != null
-                                ? Image.network(
-                                    image,
-                                    errorBuilder: (BuildContext context,
-                                        Object exception,
-                                        StackTrace? stackTrace) {
-                                      return const Icon(Icons.error);
-                                    },
-                                  )
-                                : const Icon(Icons.image),
-                          ),
-                          title: Text(
-                            name,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            category,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          trailing: Text("Rs ${price}",
-                              style: TextStyle(fontWeight: FontWeight.bold))),
+                              },
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                    Divider(
-                      height: 0,
-                      color: Colors.black,
-                    )
                   ],
                 ),
-              );
-            },
-          );
-        }
-        return Container();
-      },
-    ));
-  }
-}
-
-class CartTable extends StatelessWidget {
-  const CartTable({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("cart_items").snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          double grandTotal = 0;
-
-          if (snapshot.hasError) {
-            return Text("Something went wrong");
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CupertinoActivityIndicator(),
-            );
-          }
-          if (snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("no data available"));
-          }
-          if (snapshot != null && snapshot.data != null) {
-            for (var item in snapshot.data!.docs) {
-              grandTotal += item['qty'] * item['price'];
-            }
-            GrandTotalProvider grandTotalProvider =
-                Provider.of<GrandTotalProvider>(context, listen: false);
-
-            return SingleChildScrollView(
-                child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-              child: Table(
-                border: TableBorder.lerp(
-                  TableBorder.all(width: 1.0, color: Colors.red),
-                  TableBorder.all(width: 2.0, color: Colors.blue),
-                  0.5,
-                ),
-                children: [
-                  TableRow(
-                    decoration: BoxDecoration(boxShadow: List.empty()),
-                    children: [
-                      TableCell(
-                        child: IntrinsicWidth(
-                          child: Text(
-                            'Item Name',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      TableCell(
-                        child: Center(
-                          child: Text(
-                            'Qty',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      TableCell(
-                        child: Text(
-                          'Price',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      TableCell(
-                        child: Text(
-                          'Total',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      TableCell(
-                        child: SizedBox(), // empty cell for spacing
-                      ),
-                    ],
-                  ),
-                  for (var item in snapshot.data!.docs)
-                    TableRow(
-                      children: [
-                        TableCell(
-                          child: IntrinsicWidth(child: Text(item['itemName'])),
-                        ),
-                        TableCell(
-                          child: Center(child: Text(item['qty'].toString())),
-                        ),
-                        TableCell(
-                          child: Text(item['price'].toString()),
-                        ),
-                        TableCell(
-                          child: Center(
-                              child: Text(
-                                  (item['qty'] * item['price']).toString())),
-                        ),
-                        TableCell(
-                          child: GestureDetector(
-                              onTap: () async {
-                                await FirebaseFirestore.instance
-                                    .collection('cart_items')
-                                    .doc(item.id)
-                                    .delete();
-                              },
-                              child:
-                                  Icon(Icons.delete)), // empty cell for spacing
-                        ),
-                      ],
-                    ),
-                ],
               ),
-            ));
-            grandTotalProvider.updateGrandTotal(grandTotal);
-          }
-
-          return Container();
-        },
+            ),
+          ),
+        ],
       ),
-    );
-  }
-
-  static TableRow _buildTableRow(List<dynamic> data) {
-    return TableRow(
-      children: data
-          .map((cellData) => TableCell(
-                child: cellData is Icon
-                    ? IconButton(icon: cellData, onPressed: () {})
-                    : Text('$cellData'),
-              ))
-          .toList(),
     );
   }
 }
