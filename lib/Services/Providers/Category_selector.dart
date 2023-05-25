@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class CategoryProvider with ChangeNotifier {
-  String _selectedCategoryName = '';
+  String _selectedCategoryName = 'All';
 
   String get selectedCategoryName => _selectedCategoryName;
 

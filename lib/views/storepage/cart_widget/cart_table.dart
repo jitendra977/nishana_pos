@@ -1,12 +1,8 @@
 // ignore_for_file: dead_code
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nishanapos/Services/Providers/CartProviders/GrandTotalProvider.dart';
-import 'package:provider/provider.dart';
 
-import '../../../models/add_to_cart.dart';
+import '../../../widgets/table_popup.dart';
 
 class CartTable extends StatelessWidget {
   final String restaurantTable;
@@ -15,7 +11,10 @@ class CartTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection("cart_items").where('table_number',isEqualTo: restaurantTable).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection("cart_items")
+          .where('table_number', isEqualTo: restaurantTable)
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text("Something went wrong");
@@ -28,112 +27,116 @@ class CartTable extends StatelessWidget {
         final data = snapshot.requireData;
 
         if (data.docs.isEmpty) {
-          return const Center(child: Text("No data available"));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("No data available"),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    FirebaseFirestore.instance
+                        .collection('restaurant_table')
+                        .where("table_name", isEqualTo: restaurantTable)
+                        .get()
+                        .then((QuerySnapshot querySnapshot) {
+                      querySnapshot.docs.forEach((DocumentSnapshot doc) {
+                        doc.reference.update({'status': 'Available'});
+                      });
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: Text("Clean Table"),
+                ),
+              ],
+            ),
+          );
         }
 
+        double grandTotal = data.docs.fold(0.0, (total, item) {
+          return total + (item['qty'] * item['price']);
+        });
+
         return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-            child: Table(
-              columnWidths: const {
-                0: FlexColumnWidth(),
-                1: FlexColumnWidth(),
-                2: FlexColumnWidth(),
-                3: FlexColumnWidth(),
-                4: FixedColumnWidth(30),
-              },
-              border: TableBorder.all(width: 1.0, color: Colors.red),
+          child: Container(
+            child: Column(
               children: [
-                const TableRow(
-                  decoration: BoxDecoration(boxShadow: []),
-                  children: [
-                    TableCell(
-                      child: IntrinsicWidth(
-                        child: Text(
-                          'Item Name',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    TableCell(
-                      child: Center(
-                        child: Text(
-                          'Qty',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    TableCell(
-                      child: Text(
-                        'Price',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    TableCell(
-                      child: Text(
-                        'Total',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const TableCell(
-                        child: SizedBox()), // empty cell for spacing
-                  ],
-                ),
-                ...data.docs.map((item) => TableRow(
+                Container(
+                  color: Color.fromARGB(255, 85, 66, 4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TableCell(
-                          child: IntrinsicWidth(
-                            child: Text(item['itemName'].toString()),
-                          ),
-                        ),
-                        TableCell(
-                          child: Center(child: Text(item['qty'].toString())),
-                        ),
-                        TableCell(
-                          child: Text(item['price'].toString()),
-                        ),
-                        TableCell(
-                          child: Center(
-                            child: Text(
-                              (item['qty'] * item['price']).toString(),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => TablePopup());
+                          },
+                          child: Card(
+                            child: Row(
+                              children: [
+                                Text(
+                                  restaurantTable,
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 253, 250, 250),
+                                    fontSize: 20,
+                                    backgroundColor:
+                                        Color.fromARGB(255, 33, 33, 33),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.swap_horiz,
+                                  color: Colors.blue,
+                                ),
+                                SizedBox(width: 8),
+                              ],
                             ),
                           ),
                         ),
-                        TableCell(
-                          child: GestureDetector(
-                            onTap: () async {
-                              await FirebaseFirestore.instance
-                                  .collection('cart_items')
-                                  .doc(item.id)
-                                  .delete();
-                              final grandTotalProvider =
-                                  Provider.of<GrandTotalProvider>(context,
-                                      listen: false);
-                              grandTotalProvider.updateGrandTotal();
-                            },
-                            child: const Icon(Icons.delete),
+                        Text(
+                          "Bill :ADDJ55",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontSize: 20,
+                            backgroundColor: Colors.blue,
                           ),
                         ),
+                        Text(
+                          "Rs ${grandTotal.toString()}",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              backgroundColor: Color.fromARGB(255, 48, 4, 143)),
+                        )
                       ],
-                    )),
-                TableRow(
-                  children: [
-                    const TableCell(child: SizedBox()),
-                    const TableCell(child: SizedBox()),
-                    const TableCell(child: Text("GTotal")),
-                    TableCell(
-                      child: Consumer<GrandTotalProvider>(
-                        builder: (BuildContext context, grandTotalProvider,
-                            Widget? child) {
-                          return Text(
-                            '${grandTotalProvider.grandTotal.toString()}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          );
-                        },
-                      ),
                     ),
-                    const TableCell(child: SizedBox()),
-                  ],
+                  ),
+                ),
+                Container(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                    child: Table(
+                      columnWidths: const {
+                        0: FlexColumnWidth(4),
+                        1: FlexColumnWidth(1.4),
+                        2: FlexColumnWidth(2),
+                        3: FlexColumnWidth(1.5),
+                      },
+                      border: TableBorder.symmetric(
+                        inside: BorderSide(color: Colors.black),
+                        outside: BorderSide(color: Colors.black),
+                      ),
+                      children: [
+                        _buildTableHeaderRow(),
+                        ...data.docs.map((item) => _buildTableRow(item)),
+                        _buildGrandTotalRow(grandTotal.toString()),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -144,87 +147,198 @@ class CartTable extends StatelessWidget {
   }
 }
 
+TableRow _buildTableHeaderRow() {
+  return TableRow(
+    decoration: BoxDecoration(
+      color: Colors.grey[200],
+      border: Border(
+        bottom: BorderSide(color: Colors.black),
+      ),
+    ),
+    children: [
+      _buildTableHeaderCell('Item Name'),
+      _buildTableHeaderCell('Price'),
+      _buildTableHeaderCell('Qty'),
+      _buildTableHeaderCell('Total'),
+    ],
+  );
+}
 
-class ShowItems extends StatelessWidget {
-  final String selectedCategoryName;
-  final User? userId = FirebaseAuth.instance.currentUser;
+Widget _buildTableHeaderCell(String text) {
+  return TableCell(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      child: Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ),
+  );
+}
 
-  ShowItems({required this.selectedCategoryName});
+TableRow _buildTableRow(DocumentSnapshot item) {
+  IconData getStatusIcon(String status) {
+    switch (status) {
+      case 'saved':
+        return Icons.fireplace_rounded;
+      case 'cooking':
+        return Icons.restaurant_menu;
+      case 'ready':
+        return Icons.check_circle;
+      case 'none':
+        return Icons.access_alarm;
+      default:
+        return Icons.done_all;
+    }
+  }
 
-  @override
-  Widget build(BuildContext context) => Expanded(
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection("menu_items")
-              .where("category", isEqualTo: selectedCategoryName)
-              .snapshots(),
-          builder: (context, snapshot) => snapshot.hasData
-              ? ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    final doc = snapshot.data!.docs[index];
-                    final name = doc['item_name'],
-                        category = doc['category'],
-                        image = doc['img_url'],
-                        price = doc['price'];
+  Color getStatusColor(String status) {
+    switch (status) {
+      case 'saved':
+        return Color.fromARGB(255, 111, 0, 255);
+      case 'cooking':
+        return Colors.red;
+      case 'ready':
+        return Colors.green;
+      case 'none':
+        return Colors.black87;
+      default:
+        return Colors.grey;
+    }
+  }
 
-                    void saveToCart() async {
-                      final cartItems = await FirebaseFirestore.instance
-                          .collection("cart_items")
-                          .where("itemName", isEqualTo: name)
-                          .where("userId", isEqualTo: userId?.uid)
-                          .get();
-
-                      if (cartItems.docs.isEmpty) {
-                        FirebaseFirestore.instance
-                            .collection("cart_items")
-                            .doc()
-                            .set(AddToCart(
-                                    itemName: name,
-                                    date: DateTime.now().toString(),
-                                    price: int.tryParse(price),
-                                    qty: 1,
-                                    userId: userId?.uid,
-                                    tableNumber: "Table1")
-                                .toJson())
-                            .catchError((e) => print(e));
-                      } else {
-                        final cartItem = cartItems.docs.first;
-                        final currentQty = cartItem['qty'];
-                        FirebaseFirestore.instance
-                            .collection("cart_items")
-                            .doc(cartItem.id)
-                            .update({"qty": currentQty + 1}).catchError(
-                                (e) => print(e));
-                      }
-                    }
-
-                    return Column(children: [
-                      ListTile(
-                        leading: CircleAvatar(
-                            child: image != null
-                                ? Image.network(image,
-                                    errorBuilder: (BuildContext context,
-                                            Object exception,
-                                            StackTrace? stackTrace) =>
-                                        const Icon(Icons.error))
-                                : const Icon(Icons.image)),
-                        title: Text(name!,
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(category!,
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                        trailing: Text("Rs $price",
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                        onTap: saveToCart,
-                      ),
-                      const Divider(height: 0, color: Colors.black),
-                    ]);
-                  },
-                )
-              : const Center(child: Text("No data found")),
+  return TableRow(
+    decoration: BoxDecoration(
+      border: Border(
+        bottom: BorderSide(color: Colors.red),
+      ),
+    ),
+    children: [
+      TableCell(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: [
+              Icon(
+                getStatusIcon(item['status']),
+                color: getStatusColor(item['status']),
+              ),
+              SizedBox(width: 5),
+              Text(
+                item['itemName'],
+                style: TextStyle(color: getStatusColor(item['status'])),
+              ),
+            ],
+          ),
         ),
-      );
+      ),
+      TableCell(
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            item['price'].toString(),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      TableCell(
+        child: Center(
+          heightFactor: 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  if (item['qty'] <= 1) {
+                    await FirebaseFirestore.instance
+                        .collection('cart_items')
+                        .doc(item.id)
+                        .delete();
+                  } else {
+                    final currentQty = item['qty'];
+                    FirebaseFirestore.instance
+                        .collection("cart_items")
+                        .doc(item.id)
+                        .update({"qty": currentQty - 1}).catchError(
+                            (e) => print(e));
+                  }
+                },
+                child: _buildQuantityButton(Icons.remove, Colors.red),
+              ),
+              Text(
+                '  ${item['qty'].toString()}  ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              GestureDetector(
+                onTap: () {
+                  final currentQty = item['qty'];
+                  FirebaseFirestore.instance
+                      .collection("cart_items")
+                      .doc(item.id)
+                      .update({"qty": currentQty + 1}).catchError(
+                          (e) => print(e));
+                },
+                child: _buildQuantityButton(Icons.add, Colors.blue),
+              ),
+            ],
+          ),
+        ),
+      ),
+      TableCell(
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              (item['qty'] * item['price']).toString(),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+TableRow _buildGrandTotalRow(String grandtotal) {
+  return TableRow(
+    decoration: BoxDecoration(
+      color: Colors.grey[300],
+      border: Border(
+        top: BorderSide(color: Colors.black),
+      ),
+    ),
+    children: [
+      _buildTableHeaderCell('Grand Total'),
+      const TableCell(child: SizedBox()),
+      TableCell(
+        child: Text(
+          "       Rs.",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      TableCell(
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            grandtotal.toString(),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildQuantityButton(IconData icon, Color color) {
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(2),
+      color: color,
+    ),
+    child: Icon(
+      icon,
+      color: Colors.white,
+    ),
+  );
 }

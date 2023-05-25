@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import '../../../models/add_to_cart.dart';
 
 class ShowItems extends StatelessWidget {
-  
   final User? userId = FirebaseAuth.instance.currentUser;
-
 
   @override
   Widget build(BuildContext context) => Expanded(
@@ -41,7 +39,7 @@ class ShowItems extends StatelessWidget {
                             .set(AddToCart(
                                     itemName: name,
                                     date: DateTime.now().toString(),
-                                    price: int.tryParse(price),
+                                    price: double.tryParse(price),
                                     qty: 1,
                                     userId: userId?.uid,
                                     tableNumber: "Table1")
@@ -118,7 +116,7 @@ class _ShowCategoriesState extends State<ShowCategories> {
                       color: Colors.white,
                       child: ListTile(
                         title: Text(
-                         snapshot.data?.docs[index]["category_name"],
+                          snapshot.data?.docs[index]["category_name"],
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.black),
                         ),

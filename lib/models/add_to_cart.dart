@@ -1,10 +1,11 @@
 class AddToCart {
   String? itemName;
-  int? price;
+  double? price;
   int? qty;
   String? tableNumber;
   String? date;
   String? userId;
+  String? status;
 
   AddToCart(
       {this.itemName,
@@ -12,7 +13,8 @@ class AddToCart {
       this.qty,
       this.tableNumber,
       this.date,
-      this.userId});
+      this.userId,
+      this.status});
 
   AddToCart.fromJson(Map<String, dynamic> json) {
     itemName = json['itemName'];
@@ -21,6 +23,7 @@ class AddToCart {
     tableNumber = json['table_number'];
     date = json['date'];
     userId = json['userId'];
+    userId = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class AddToCart {
     data['table_number'] = this.tableNumber;
     data['date'] = this.date;
     data['userId'] = this.userId;
+    data['status'] = 'none';
     return data;
   }
 }

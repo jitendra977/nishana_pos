@@ -1,10 +1,8 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
-
 
 String _selectedCategory = 'Select Category';
 
@@ -195,7 +193,10 @@ class _AddMenuItemState extends State<AddMenuItem> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Barcode',
-                  suffixIcon: Icon(Icons.camera_enhance),
+                  suffixIcon: GestureDetector(
+                    onTap: () {},
+                    child: Icon(Icons.camera_enhance),
+                  ),
                 ),
               ),
               ElevatedButton(
